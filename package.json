@@ -1,0 +1,8 @@
+{
+  "name": "module-guideline-tracker",
+  "version": "1.0.0",
+  "description": "An immersive scholarly progress tracker with theme support and wax-seal completion.",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

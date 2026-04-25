@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Guideline Progress Tracker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Monsieur+La+Doulaise&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-regency-core">
+    <div id="passwordOverlay" class="password-overlay">
+        <div class="gate-content">
+            <div class="lock-icon">🗝️</div>
+            <h2 class="gate-title">The Scholar's Sanctum</h2>
+            <p class="gate-subtitle">Enter the secret key to unlock the archives</p>
+            <div class="input-wrapper">
+                <input type="password" id="gatePass" placeholder="Enter Secret Key..." autocomplete="off">
+                <button id="unlockBtn" class="unlock-btn">Unlock</button>
+            </div>
+            <p id="errorMsg" class="error-msg hidden">The key is incorrect. The archives remain sealed.</p>
+        </div>
+    </div>
+    <header class="app-header">
+        <h1 class="elegant-title">Module Guideline</h1>
+        <h2 class="elegant-subtitle">Progress Tracker</h2>
+        <div class="theme-selector">
+            <select id="themeSelect" title="Change Theme">
+                <option value="theme-regency-core">Countryside</option>
+                <option value="theme-light-academia">Light Academia</option>
+                <option value="theme-golden-age">Islamic Golden Age</option>
+            </select>
+            
+            <button id="menuToggle" class="menu-btn" title="Toggle Tasks">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="map-container" id="mapContainer">
+            <div class="map-wrapper" id="mapWrapper">
+                <img id="mapBackground" class="map-background-img" src="images/regency_bg.png" draggable="false" alt="Map Terrain">
+                <svg class="map-path-svg" id="mapPathSvg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="inkSpread">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
+                        </filter>
+                    </defs>
+                    <path id="mainPath" d="" class="path-unfilled"></path>
+                    <path id="progressPath" d="" class="path-filled"></path>
+                </svg>
+                <div id="nodesContainer" class="nodes-container">
+                    <!-- Nodes generated via JS -->
+                </div>
+                <div id="secretsContainer" class="secrets-container">
+                    <!-- Secrets generated via JS -->
+                </div>
+                <div id="atmosphereContainer" class="atmosphere-container"></div>
+                
+                <!-- Lore Popup Overlay -->
+                <div id="lorePopup" class="lore-popup hidden">
+                    <p id="loreText"></p>
+                </div>
+            </div>
+        </div>
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Tasks</h3>
+                <div>
+                    <button id="editMapBtn" class="vintage-btn" title="Unlock Map Pins">📍</button>
+                    <button id="addTaskBtn" class="vintage-btn" title="Add Task">+</button>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4>App Settings</h4>
+                <div class="mode-toggle-group">
+                    <label>View Mode</label>
+                    <div class="view-mode-buttons">
+                        <button id="forceDesktopBtn" class="mode-btn">Desktop View</button>
+                        <button id="forceMobileBtn" class="mode-btn">Mobile View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Key Settings</h4>
+                <button id="openChangePassBtn" class="vintage-btn" style="width: 100%; margin-top: 10px;">Change Secret Key</button>
+            </div>
+
+            <ul id="taskList" class="task-list">
+                <!-- Tasks generated via JS -->
+            </ul>
+        </aside>
+    </main>
+
+
+    <!-- Scholar's Journal Overlay -->
+    <div id="journalOverlay" class="journal-overlay hidden">
+        <div class="parchment">
+            <button id="closeJournalBtn" class="close-journal-btn">&times;</button>
+            <div class="journal-content">
+                <h2 id="journalTitle" class="handwritten-title">Week One Reflection</h2>
+                
+                <div class="journal-section">
+                    <label class="handwritten-label">Daily Observations</label>
+                    <textarea id="journalNotes" class="handwritten-text" placeholder="Write your thoughts here, scholar..."></textarea>
+                </div>
+
+                <div class="journal-section">
+                    <label class="handwritten-label">Sub-Tasks & Milestones</label>
+                    <div id="subTaskList" class="subtask-list">
+                        <!-- Dynamic subtasks -->
+                    </div>
+                    <div class="add-subtask-group">
+                        <input type="text" id="newSubtaskInput" class="handwritten-input" placeholder="New objective...">
+                        <button id="addSubtaskBtn" class="vintage-btn-small">+</button>
+                    </div>
+                </div>
+
+                <div class="journal-footer">
+                    <p class="parchment-date" id="journalDate"></p>
+                    <button id="journalCompleteBtn" class="wax-seal-btn" title="Seal this week">Seal Week</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding/Editing Task -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <h2 id="modalTitle">Add Task</h2>
+            <form id="taskForm">
+                <input type="hidden" id="taskId">
+                <div class="form-group">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDesc">Description (Optional)</label>
+                    <textarea id="taskDesc" rows="3"></textarea>
+                </div>
+                <button type="submit" class="vintage-btn primary">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePassModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" id="closePassModalBtn">&times;</span>
+            <h2 class="modal-title">Forge a New Key</h2>
+            <div class="form-group">
+                <label>Current Key</label>
+                <input type="password" id="currentPassInput" placeholder="Verify Current Key...">
+            </div>
+            <div class="form-group">
+                <label>New Secret Key</label>
+                <input type="password" id="newPassInput" placeholder="Enter New Key...">
+            </div>
+            <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="savePassBtn" class="vintage-btn primary" style="flex: 1;">Save New Key</button>
+            </div>
+            <p id="passModalMsg" class="error-msg hidden" style="text-align: center; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>&copy; Made by Kifah</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
